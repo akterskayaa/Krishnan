@@ -277,15 +277,57 @@ body::after {
   user-select: none;
 }
 
-/* ─── SOUND BUTTON ─────────────────────────────── */
-.snd-btn {
-  position: fixed; top: 2rem; right: 2.5rem; z-index: 200;
-  background: none; border: 1px solid rgba(245,245,243,.1);
-  color: rgba(245,245,243,.28); font-size: .58rem; letter-spacing: .18em;
-  text-transform: uppercase; padding: .45rem .95rem; cursor: pointer;
-  transition: border-color .35s, color .35s; font-family: 'DM Sans', sans-serif;
+/* ─── SECTION 5 — SPLIT LAYOUT ─────────────────── */
+.s5-wrap {
+  position: relative; z-index: 2;
+  display: -webkit-flex; display: flex;
+  width: 100%; height: 100%;
+  -webkit-align-items: center; align-items: center;
 }
-.snd-btn:hover, .snd-btn.on { border-color: var(--accent); color: var(--accent); }
+
+/* Photo — right column */
+.s5-photo {
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 44%;
+  overflow: hidden;
+}
+.s5-img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center top;
+  /* Dark cinematic treatment: desaturate + darken + warm tint via overlay */
+  filter: grayscale(88%) contrast(1.18) brightness(0.58);
+  display: block;
+}
+.s5-photo-veil {
+  position: absolute; inset: 0;
+  /* Amber warmth + left fade so text is readable */
+  background:
+    linear-gradient(to right, var(--bg) 0%, rgba(11,11,12,.55) 35%, rgba(11,11,12,.15) 100%),
+    linear-gradient(to bottom, rgba(11,11,12,.3) 0%, transparent 30%, rgba(11,11,12,.5) 100%);
+}
+/* Amber tone overlay — adds warmth to the greyscale photo */
+.s5-photo-veil::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(198,161,91,.07);
+  mix-blend-mode: screen;
+}
+
+/* Text — left column */
+.s5-text {
+  position: relative; z-index: 2;
+  max-width: 52%; padding: 0 5vw 0 5vw;
+  text-align: left;
+}
+
+@media (max-width: 768px) {
+  .s5-photo { width: 100%; opacity: .35; }
+  .s5-text  { max-width: 100%; padding: 0 7vw; }
+  .s5-photo-veil {
+    background: linear-gradient(to bottom, var(--bg) 0%, rgba(11,11,12,.5) 50%, var(--bg) 100%);
+  }
+}
 
 /* ─── SCROLL HINT ──────────────────────────────── */
 .hint {
@@ -387,7 +429,6 @@ body { transition: background 3s ease; }
   .portrait-text { padding: 0 7vw; }
   .form-wrap { padding: 7vh 7vw 6vh; }
   .counter { top: 1.4rem; left: 1.4rem; }
-  .snd-btn { top: 1.4rem; right: 1.4rem; }
   .hint { right: 2rem; bottom: 3.2rem; }
   .cur, .cur-ring { display: none; }
   html, body { cursor: auto; }
@@ -403,7 +444,6 @@ body { transition: background 3s ease; }
 
 <!-- ─── UI CHROME ─── -->
 <div  class="counter"  id="counter">01 / 14</div>
-<button class="snd-btn" id="sndBtn">○ sound</button>
 <div  class="hint"    id="hint"><span>scroll</span><div class="hint-arr"></div></div>
 <div  class="dots"    id="dots"></div>
 
@@ -505,21 +545,43 @@ body { transition: background 3s ease; }
 
 <!-- ─── SECTION 5 ─── -->
 <section class="slide" data-i="4">
-  <div class="glow" style="width:520px;height:520px;
-    background:radial-gradient(circle,rgba(198,161,91,.1) 0%,transparent 68%);
-    top:12%;right:8%;"></div>
-  <div class="ct">
-    <p class="small r" style="margin-bottom:2.2rem;">My path has moved across different worlds —</p>
-    <div>
-      <span class="wf">science</span>
-      <span class="wf">story</span>
-      <span class="wf">performance</span>
-      <span class="wf">spiritual practice</span>
+  <div class="glow" style="width:500px;height:500px;
+    background:radial-gradient(circle,rgba(198,161,91,.12) 0%,transparent 65%);
+    top:20%;left:5%;"></div>
+
+  <div class="s5-wrap">
+    <!-- LEFT: text -->
+    <div class="s5-text">
+      <p class="small r" style="margin-bottom:1.4rem;color:rgba(245,245,243,.2);">A personal note —</p>
+      <h2 class="h2 r d1" style="font-size:clamp(1.6rem,3vw,2.8rem);line-height:1.2;margin-bottom:2rem;">
+        Hi! My name is<br>
+        <span class="serif-i accent">Krishnan Unnikrishnan</span>
+      </h2>
+      <p class="small r d2" style="margin-bottom:1.6rem;color:rgba(245,245,243,.25);">My path has moved across different worlds —</p>
+      <div>
+        <span class="wf">science</span>
+        <span class="wf">story</span>
+        <span class="wf">performance</span>
+        <span class="wf">spiritual practice</span>
+      </div>
+      <p class="body r d5" style="margin-top:1.8rem;color:rgba(245,245,243,.38);font-size:clamp(.88rem,1.5vw,1.05rem);">
+        but they never felt separate to me.<br>
+        they felt like one question<br>seen from different angles.
+      </p>
     </div>
-    <p class="body r d5" style="margin-top:2.2rem;color:rgba(245,245,243,.38);">
-      but they never felt separate to me.<br>
-      they felt like one question<br>seen from different angles.
-    </p>
+
+    <!-- RIGHT: photo -->
+    <!--
+      ══ ADD YOUR PHOTO ═══════════════════════
+      Upload krishnan.jpg to your GitHub repo
+      (same folder as index.html)
+      The CSS will handle the cinematic treatment.
+      ═════════════════════════════════════════
+    -->
+    <div class="s5-photo r d2">
+      <img class="s5-img" src="krishnan.jpg" alt="Krishnan Unnikrishnan">
+      <div class="s5-photo-veil"></div>
+    </div>
   </div>
 </section>
 
@@ -737,15 +799,12 @@ const N   = 14;
 let busy  = false;
 let choiceOpen = false;
 let choiceDone = false;
-let soundOn    = false;
-let audioCtx, masterGain;
 
 const stage   = document.getElementById('stage');
 const dotsEl  = document.getElementById('dots');
 const counter = document.getElementById('counter');
 const hint    = document.getElementById('hint');
 const overlay = document.getElementById('cOverlay');
-const sndBtn  = document.getElementById('sndBtn');
 
 
 /* ═══════════════════════════════════════════
@@ -790,7 +849,6 @@ function nav(to, skipChoice) {
   refreshDots();
   counter.textContent = String(cur + 1).padStart(2, '0') + ' / ' + N;
   if (cur >= 2) hint.classList.add('gone');
-  if (soundOn)  updateSnd(cur);
 
   setTimeout(() => { act(cur); busy = false; }, 90);
   setTimeout(() => { busy = false; }, 1000);
@@ -916,105 +974,6 @@ document.querySelectorAll('button, a, input, textarea, .dot').forEach(el => {
 });
 
 
-/* ═══════════════════════════════════════════
-   AMBIENT SOUND  (Web Audio API — all generated, no files)
-═══════════════════════════════════════════ */
-function initAudio() {
-  if (audioCtx) return;
-  audioCtx  = new (window.AudioContext || window.webkitAudioContext)();
-  masterGain = audioCtx.createGain();
-  masterGain.gain.value = 0;
-  masterGain.connect(audioCtx.destination);
-
-  // Synthetic reverb
-  const conv    = audioCtx.createConvolver();
-  conv.buffer   = makeReverb(audioCtx, 6, 2.8);
-  const convG   = audioCtx.createGain();
-  convG.gain.value = 0.65;
-  conv.connect(convG); convG.connect(masterGain);
-
-  // Drone bus
-  const drone = audioCtx.createGain();
-  drone.gain.value = 0.038;
-  drone.connect(masterGain);
-  drone.connect(conv);
-
-  // A-minor drone cluster: A1 E2 A2 D3 A3
-  const freqs = [55, 82.41, 110, 146.83, 220];
-  freqs.forEach((f, i) => {
-    const osc  = audioCtx.createOscillator();
-    osc.type   = i === 0 ? 'triangle' : 'sine';
-    osc.frequency.value = f + (Math.random() - .5) * .35;
-    const g    = audioCtx.createGain();
-    g.gain.value = 0.28 / (i + 1);
-
-    // Micro-vibrato LFO
-    const lfo  = audioCtx.createOscillator();
-    lfo.frequency.value = 0.035 + Math.random() * .065;
-    const lfoG = audioCtx.createGain();
-    lfoG.gain.value = f * .0022;
-    lfo.connect(lfoG); lfoG.connect(osc.frequency);
-    lfo.start();
-
-    osc.connect(g); g.connect(drone);
-    osc.start();
-  });
-
-  // Upper partial shimmer (sent only to reverb)
-  const shimmer = audioCtx.createOscillator();
-  shimmer.type  = 'sine';
-  shimmer.frequency.value = 1760;
-  const shimG   = audioCtx.createGain();
-  shimG.gain.value = 0.0045;
-  shimmer.connect(shimG); shimG.connect(conv);
-  shimmer.start();
-
-  // Very slow filter sweep for texture
-  const filt = audioCtx.createBiquadFilter();
-  filt.type  = 'lowpass';
-  filt.frequency.value = 800;
-  const sweep = audioCtx.createOscillator();
-  sweep.frequency.value = 0.02;
-  const sweepG = audioCtx.createGain();
-  sweepG.gain.value = 400;
-  sweep.connect(sweepG); sweepG.connect(filt.frequency);
-  sweep.start();
-}
-
-function makeReverb(ctx, dur, dec) {
-  const sr  = ctx.sampleRate;
-  const len = sr * dur;
-  const buf = ctx.createBuffer(2, len, sr);
-  for (let c = 0; c < 2; c++) {
-    const data = buf.getChannelData(c);
-    for (let i = 0; i < len; i++)
-      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, dec);
-  }
-  return buf;
-}
-
-// Slightly vary volume per slide — quieter at dawn (S1), richer mid-journey
-const volMap = [.32,.28,.26,.32,.28,.38,.33,.3,.36,.28,.36,.26,.32,.2];
-
-function updateSnd(slide) {
-  if (!masterGain) return;
-  const v = volMap[slide] ?? .3;
-  masterGain.gain.linearRampToValueAtTime(v, audioCtx.currentTime + 2.8);
-}
-
-sndBtn.addEventListener('click', () => {
-  initAudio();
-  soundOn = !soundOn;
-  if (soundOn) {
-    sndBtn.textContent = '● sound';
-    sndBtn.classList.add('on');
-    masterGain.gain.linearRampToValueAtTime(volMap[cur] ?? .3, audioCtx.currentTime + 2.2);
-  } else {
-    sndBtn.textContent = '○ sound';
-    sndBtn.classList.remove('on');
-    masterGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1.2);
-  }
-});
 
 
 /* ═══════════════════════════════════════════
