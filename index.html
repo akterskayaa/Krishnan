@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <title>Krishnan</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,20 +25,31 @@
 }
 
 /* ─── BASE ─────────────────────────────────────── */
-html, body {
+html {
   width: 100%; height: 100%;
+  overflow: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  width: 100%;
+  height: 100%;
+  height: 100dvh; /* dynamic viewport height — fixes iOS address bar */
   overflow: hidden;
   background: var(--bg);
   color: var(--fg);
   font-family: 'DM Sans', sans-serif;
   font-weight: 300;
   cursor: none;
+  /* Prevent iOS rubber-band scroll */
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
 }
 
 /* ─── GRAIN OVERLAY ────────────────────────────── */
 body::after {
   content: '';
-  position: fixed; inset: 0;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   opacity: 0.028;
   pointer-events: none;
@@ -61,10 +74,20 @@ body::after {
 .cur.hover { transform: translate(-50%,-50%) scale(0.4); opacity: .5; }
 
 /* ─── STAGE ────────────────────────────────────── */
-.stage-wrap { position: fixed; inset: 0; overflow: hidden; }
+.stage-wrap {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  overflow: hidden;
+  /* iOS fix */
+  -webkit-overflow-scrolling: none;
+}
 .stage {
+  display: -webkit-flex;
   display: flex;
-  width: calc(14 * 100vw); height: 100vh;
+  width: calc(14 * 100vw);
+  height: 100vh;
+  height: 100dvh;
+  -webkit-transition: -webkit-transform var(--spd) cubic-bezier(.76,0,.24,1);
   transition: transform var(--spd) cubic-bezier(.76,0,.24,1);
   will-change: transform;
 }
@@ -72,8 +95,14 @@ body::after {
 /* ─── SLIDES ───────────────────────────────────── */
 .slide {
   position: relative;
-  min-width: 100vw; height: 100vh;
-  display: flex; align-items: center; justify-content: center;
+  min-width: 100vw; min-width: 100svw;
+  height: 100vh; height: 100dvh;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
   overflow: hidden;
 }
 
@@ -190,7 +219,13 @@ body::after {
 .portrait-text { position: relative; z-index: 2; max-width: 520px; padding: 0 7vw; }
 
 /* ─── FORM (S14) ───────────────────────────────── */
-.slide.s14 { align-items: flex-start; overflow-y: auto; overscroll-behavior: contain; }
+.slide.s14 {
+  -webkit-align-items: flex-start;
+  align-items: flex-start;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
 .form-wrap { position: relative; z-index: 2; width: 100%; max-width: 560px; padding: 9vh 5vw 7vh; }
 .form-title {
   font-family: 'Playfair Display', serif; font-weight: 400;
@@ -270,12 +305,22 @@ body::after {
 
 /* ─── CHOICE OVERLAY ───────────────────────────── */
 .c-overlay {
-  position: fixed; inset: 0; z-index: 500;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba(11,11,12,.96);
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 500;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  /* Slightly opaque bg instead of backdrop-filter for Android compat */
+  background: rgba(11,11,12,.97);
   opacity: 0; pointer-events: none;
+  -webkit-transition: opacity 1.3s ease;
   transition: opacity 1.3s ease;
-  backdrop-filter: blur(14px) saturate(.7);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 .c-overlay.open { opacity: 1; pointer-events: all; }
 
@@ -826,11 +871,25 @@ window.addEventListener('keydown', e => {
 /* ═══════════════════════════════════════════
    TOUCH
 ═══════════════════════════════════════════ */
-let tx = 0;
-window.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
-window.addEventListener('touchend',   e => {
+let tx = 0, ty = 0;
+
+window.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX;
+  ty = e.touches[0].clientY;
+}, { passive: true });
+
+window.addEventListener('touchmove', e => {
+  // On non-form slides, block native scroll to prevent rubber-band on iOS
+  if (cur !== 13) e.preventDefault();
+}, { passive: false });
+
+window.addEventListener('touchend', e => {
   const dx = e.changedTouches[0].clientX - tx;
-  if (Math.abs(dx) > 48) nav(dx < 0 ? cur + 1 : cur - 1);
+  const dy = e.changedTouches[0].clientY - ty;
+  // Horizontal swipe (wider than tall movement)
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 42) {
+    nav(dx < 0 ? cur + 1 : cur - 1);
+  }
 }, { passive: true });
 
 
@@ -971,9 +1030,17 @@ window.handleForm = function(e) {
 
 
 /* ═══════════════════════════════════════════
-   RESIZE
+   RESIZE + iOS vh fix
 ═══════════════════════════════════════════ */
+function setVh() {
+  // Fixes 100vh including iOS address bar
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--real-vh', vh + 'px');
+}
+setVh();
+
 window.addEventListener('resize', () => {
+  setVh();
   stage.style.transition = 'none';
   stage.style.transform  = `translateX(calc(${cur} * -100vw))`;
   requestAnimationFrame(() => {
