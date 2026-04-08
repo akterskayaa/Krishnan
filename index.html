@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Krishnan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400&display=swap" rel="stylesheet">
+<style>
+
+/* ─── RESET ────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ─── TOKENS ───────────────────────────────────── */
+:root {
+  --bg:     #0B0B0C;
+  --fg:     #F5F5F3;
+  --amber:  #C6A15B;
+  --violet: #6B5CFF;
+  --accent: #C6A15B;
+  --spd:    0.85s;
+}
+
+/* ─── BASE ─────────────────────────────────────── */
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  cursor: none;
+}
+
+/* ─── GRAIN OVERLAY ────────────────────────────── */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.028;
+  pointer-events: none;
+  z-index: 8888;
+}
+
+/* ─── CURSOR ───────────────────────────────────── */
+.cur {
+  position: fixed; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent); pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%); mix-blend-mode: screen;
+  transition: transform .12s ease, opacity .2s ease;
+}
+.cur-ring {
+  position: fixed; width: 30px; height: 30px;
+  border: 1px solid rgba(198,161,91,.3); border-radius: 50%;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: width .35s ease, height .35s ease, border-color .4s ease;
+}
+.cur-ring.hover { width: 52px; height: 52px; border-color: rgba(198,161,91,.6); }
+.cur.hover { transform: translate(-50%,-50%) scale(0.4); opacity: .5; }
+
+/* ─── STAGE ────────────────────────────────────── */
+.stage-wrap { position: fixed; inset: 0; overflow: hidden; }
+.stage {
+  display: flex;
+  width: calc(14 * 100vw); height: 100vh;
+  transition: transform var(--spd) cubic-bezier(.76,0,.24,1);
+  will-change: transform;
+}
+
+/* ─── SLIDES ───────────────────────────────────── */
+.slide {
+  position: relative;
+  min-width: 100vw; height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+
+/* ─── BREATHING GLOW ───────────────────────────── */
+.glow {
+  position: absolute; border-radius: 50%;
+  filter: blur(90px);
+  pointer-events: none;
+  animation: breathe 10s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%, 100% { transform: scale(.93); opacity: .09; }
+  50%       { transform: scale(1.07); opacity: .21; }
+}
+
+/* ─── CONTENT ──────────────────────────────────── */
+.ct { position: relative; z-index: 2; text-align: center; max-width: 700px; padding: 0 5vw; }
+.ct-l { text-align: left; }
+
+/* ─── TYPOGRAPHY ───────────────────────────────── */
+.serif   { font-family: 'Playfair Display', serif; font-weight: 400; }
+.serif-i { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 400; }
+
+.hero {
+  font-family: 'Playfair Display', serif; font-weight: 400;
+  font-size: clamp(2.6rem,5.2vw,5.2rem); line-height: 1.14; letter-spacing: -.015em;
+}
+.h2 {
+  font-family: 'Playfair Display', serif; font-weight: 400;
+  font-size: clamp(1.8rem,3.6vw,3.6rem); line-height: 1.2;
+}
+.body {
+  font-size: clamp(.95rem,1.7vw,1.2rem); line-height: 1.9;
+  color: rgba(245,245,243,.5);
+}
+.small {
+  font-size: clamp(.72rem,1.1vw,.82rem); letter-spacing: .17em;
+  text-transform: uppercase; color: rgba(245,245,243,.22);
+  font-family: 'DM Sans', sans-serif;
+}
+.accent   { color: var(--accent); }
+.muted    { color: rgba(245,245,243,.2); }
+.half     { color: rgba(245,245,243,.45); }
+
+/* ─── REVEAL ───────────────────────────────────── */
+.r {
+  opacity: 0;
+  transform: translateY(28px);
+  filter: blur(6px);
+  transition: opacity .9s ease, transform .9s ease, filter .9s ease;
+}
+.slide.active .r { opacity: 1; transform: translateY(0); filter: blur(0); }
+.d1 { transition-delay: .18s; }
+.d2 { transition-delay: .36s; }
+.d3 { transition-delay: .54s; }
+.d4 { transition-delay: .72s; }
+.d5 { transition-delay: .90s; }
+.d6 { transition-delay: 1.08s; }
+
+/* ─── FLOATING WORDS (S5) ──────────────────────── */
+.wf {
+  display: block;
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: clamp(1.3rem,2.4vw,2rem); color: var(--accent);
+  opacity: 0; transform: translateY(16px);
+  transition: opacity .7s ease, transform .7s ease;
+  margin: .22em 0;
+}
+.slide.active .wf:nth-child(1) { opacity: 1; transform: none; transition-delay: .12s; }
+.slide.active .wf:nth-child(2) { opacity: 1; transform: none; transition-delay: .30s; }
+.slide.active .wf:nth-child(3) { opacity: 1; transform: none; transition-delay: .48s; }
+.slide.active .wf:nth-child(4) { opacity: 1; transform: none; transition-delay: .66s; }
+
+/* ─── DIVIDER ──────────────────────────────────── */
+.line { width: 34px; height: 1px; background: var(--accent); margin: 1.8rem auto; opacity: .4; }
+
+/* ─── FLOW (S10) ───────────────────────────────── */
+.flow-item {
+  display: block;
+  font-size: clamp(.8rem,1.3vw,.9rem); letter-spacing: .14em;
+  text-transform: uppercase; color: rgba(245,245,243,.35);
+  margin: .45em 0;
+}
+.flow-arr { display: block; color: var(--accent); font-size: .85em; margin: .05em 0; }
+.flow-final {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: clamp(1.5rem,2.8vw,2.5rem); color: var(--fg);
+  letter-spacing: 0; text-transform: none; margin-top: .25em;
+}
+
+/* ─── PORTRAIT (S12) ───────────────────────────── */
+.portrait-wrap { position: absolute; inset: 0; }
+.portrait-img  { width: 100%; height: 100%; object-fit: cover; object-position: center top; opacity: .58; display: block; }
+
+/* Warm-light placeholder — remove when real photo is added */
+.portrait-ph {
+  width: 100%; height: 100%;
+  background:
+    radial-gradient(ellipse 48% 72% at 64% 42%, rgba(198,161,91,.24) 0%, transparent 55%),
+    radial-gradient(ellipse 22% 38% at 70% 22%, rgba(255,225,170,.1) 0%, transparent 42%),
+    radial-gradient(ellipse 80% 100% at 62% 65%, rgba(198,161,91,.06) 0%, transparent 65%),
+    linear-gradient(155deg, #1c1109 0%, #0b0b0c 42%, #0f0b18 100%);
+}
+
+.portrait-grad {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(11,11,12,.93) 0%,
+    rgba(11,11,12,.62) 42%,
+    rgba(11,11,12,.82) 100%
+  );
+}
+.portrait-text { position: relative; z-index: 2; max-width: 520px; padding: 0 7vw; }
+
+/* ─── FORM (S14) ───────────────────────────────── */
+.slide.s14 { align-items: flex-start; overflow-y: auto; overscroll-behavior: contain; }
+.form-wrap { position: relative; z-index: 2; width: 100%; max-width: 560px; padding: 9vh 5vw 7vh; }
+.form-title {
+  font-family: 'Playfair Display', serif; font-weight: 400;
+  font-size: clamp(2.2rem,4.2vw,4rem); line-height: 1.13; margin-bottom: 3rem;
+}
+.form-g    { margin-bottom: 1.9rem; }
+.form-lbl  {
+  display: block; font-size: .62rem; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--accent); opacity: .75; margin-bottom: .55rem;
+}
+.form-in, .form-ta {
+  width: 100%; background: transparent; border: none;
+  border-bottom: 1px solid rgba(245,245,243,.11);
+  color: var(--fg); font-family: 'DM Sans', sans-serif;
+  font-size: .95rem; font-weight: 300; padding: .5rem 0;
+  outline: none; transition: border-color .35s ease;
+}
+.form-in:focus, .form-ta:focus { border-bottom-color: var(--accent); }
+.form-in::placeholder, .form-ta::placeholder { color: rgba(245,245,243,.18); }
+.form-ta { resize: none; height: 60px; line-height: 1.65; }
+.form-btn {
+  background: transparent;
+  border: 1px solid rgba(198,161,91,.45); color: rgba(198,161,91,.75);
+  font-family: 'DM Sans', sans-serif; font-size: .68rem;
+  letter-spacing: .2em; text-transform: uppercase;
+  padding: .9rem 2.6rem; cursor: pointer; margin-top: .6rem;
+  transition: background .35s ease, color .35s ease, border-color .35s ease;
+}
+.form-btn:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+/* ─── PROGRESS DOTS ────────────────────────────── */
+.dots {
+  position: fixed; bottom: 1.8rem; left: 50%;
+  transform: translateX(-50%); display: flex; gap: 8px; z-index: 200;
+}
+.dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: rgba(245,245,243,.16); transition: background .45s, transform .45s;
+  cursor: pointer;
+}
+.dot.visited { background: rgba(198,161,91,.3); }
+.dot.active  { background: var(--accent); transform: scale(1.55); }
+
+/* ─── COUNTER ──────────────────────────────────── */
+.counter {
+  position: fixed; top: 2rem; left: 2.5rem; z-index: 200;
+  font-size: .58rem; letter-spacing: .22em; color: rgba(245,245,243,.16);
+  font-family: 'DM Sans', sans-serif; transition: color .5s ease;
+  user-select: none;
+}
+
+/* ─── SOUND BUTTON ─────────────────────────────── */
+.snd-btn {
+  position: fixed; top: 2rem; right: 2.5rem; z-index: 200;
+  background: none; border: 1px solid rgba(245,245,243,.1);
+  color: rgba(245,245,243,.28); font-size: .58rem; letter-spacing: .18em;
+  text-transform: uppercase; padding: .45rem .95rem; cursor: pointer;
+  transition: border-color .35s, color .35s; font-family: 'DM Sans', sans-serif;
+}
+.snd-btn:hover, .snd-btn.on { border-color: var(--accent); color: var(--accent); }
+
+/* ─── SCROLL HINT ──────────────────────────────── */
+.hint {
+  position: fixed; bottom: 3.6rem; right: 3rem; z-index: 200;
+  display: flex; align-items: center; gap: .6rem;
+  opacity: .22; transition: opacity 1.5s ease; pointer-events: none;
+}
+.hint.gone { opacity: 0; }
+.hint span { font-size: .58rem; letter-spacing: .2em; text-transform: uppercase; font-family: 'DM Sans', sans-serif; }
+.hint-arr  { width: 22px; height: 1px; background: var(--fg); position: relative; }
+.hint-arr::after {
+  content: ''; position: absolute; right: -1px; top: -3px;
+  width: 6px; height: 6px;
+  border-right: 1px solid var(--fg); border-top: 1px solid var(--fg);
+  transform: rotate(45deg);
+}
+
+/* ─── CHOICE OVERLAY ───────────────────────────── */
+.c-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(11,11,12,.96);
+  opacity: 0; pointer-events: none;
+  transition: opacity 1.3s ease;
+  backdrop-filter: blur(14px) saturate(.7);
+}
+.c-overlay.open { opacity: 1; pointer-events: all; }
+
+.c-box  { text-align: center; max-width: 600px; padding: 0 5vw; }
+
+.c-q {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: clamp(1.9rem,3.8vw,3.4rem); color: var(--fg);
+  opacity: 0; transform: translateY(18px);
+  transition: opacity 1s ease .4s, transform 1s ease .4s;
+  line-height: 1.2;
+}
+.c-overlay.open .c-q { opacity: 1; transform: none; }
+
+.c-sub {
+  font-size: .6rem; letter-spacing: .18em; text-transform: uppercase;
+  color: rgba(245,245,243,.2); margin: 1rem 0 3rem;
+  opacity: 0; transition: opacity 1s ease .65s;
+}
+.c-overlay.open .c-sub { opacity: 1; }
+
+.c-opts { display: flex; flex-direction: column; gap: .85rem; }
+
+.c-opt {
+  background: transparent;
+  border: 1px solid rgba(245,245,243,.07);
+  color: rgba(245,245,243,.45);
+  font-family: 'DM Sans', sans-serif; font-size: clamp(.85rem,1.5vw,.98rem);
+  font-weight: 300; padding: 1.1rem 2rem; cursor: pointer;
+  transition: border-color .4s, color .4s, background .4s;
+  text-align: left; letter-spacing: .01em;
+  opacity: 0; transform: translateY(10px);
+}
+.c-overlay.open .c-opt:nth-child(1) {
+  opacity: 1; transform: none;
+  transition: opacity .8s ease .75s, transform .8s ease .75s,
+              border-color .4s, color .4s, background .4s;
+}
+.c-overlay.open .c-opt:nth-child(2) {
+  opacity: 1; transform: none;
+  transition: opacity .8s ease .92s, transform .8s ease .92s,
+              border-color .4s, color .4s, background .4s;
+}
+.c-overlay.open .c-opt:nth-child(3) {
+  opacity: 1; transform: none;
+  transition: opacity .8s ease 1.09s, transform .8s ease 1.09s,
+              border-color .4s, color .4s, background .4s;
+}
+.c-opt:hover { border-color: rgba(198,161,91,.5); color: var(--fg); }
+
+/* ─── SECTION LABEL ────────────────────────────── */
+.slbl {
+  position: absolute; top: 2.2rem; right: 2.8rem;
+  font-size: .52rem; letter-spacing: .25em; text-transform: uppercase;
+  color: rgba(245,245,243,.08); font-family: 'DM Sans', sans-serif;
+}
+
+/* ─── THEME TRANSITIONS ────────────────────────── */
+body { transition: background 3s ease; }
+
+/* ─── MOBILE ───────────────────────────────────── */
+@media (max-width: 768px) {
+  .ct { padding: 0 7vw; }
+  .portrait-text { padding: 0 7vw; }
+  .form-wrap { padding: 7vh 7vw 6vh; }
+  .counter { top: 1.4rem; left: 1.4rem; }
+  .snd-btn { top: 1.4rem; right: 1.4rem; }
+  .hint { right: 2rem; bottom: 3.2rem; }
+  .cur, .cur-ring { display: none; }
+  html, body { cursor: auto; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ─── CURSOR ─── -->
+<div class="cur"     id="cur"></div>
+<div class="cur-ring" id="curRing"></div>
+
+<!-- ─── UI CHROME ─── -->
+<div  class="counter"  id="counter">01 / 14</div>
+<button class="snd-btn" id="sndBtn">○ sound</button>
+<div  class="hint"    id="hint"><span>scroll</span><div class="hint-arr"></div></div>
+<div  class="dots"    id="dots"></div>
+
+<!-- ─── CHOICE OVERLAY ─── -->
+<div class="c-overlay" id="cOverlay">
+  <div class="c-box">
+    <h2 class="c-q">What future are we becoming?</h2>
+    <p  class="c-sub">stay with one</p>
+    <div class="c-opts">
+      <button class="c-opt" onclick="choose('amber')">One where we remember how to gather</button>
+      <button class="c-opt" onclick="choose('violet')">One where technology amplifies presence</button>
+      <button class="c-opt" onclick="choose('rose')">One where culture is something we practice</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     STAGE — 14 sections, each 100vw × 100vh
+═══════════════════════════════════════════════ -->
+<div class="stage-wrap">
+<div class="stage" id="stage">
+
+
+<!-- ─── SECTION 1 ─── -->
+<section class="slide" data-i="0">
+  <div class="glow" style="width:750px;height:750px;
+    background:radial-gradient(circle,rgba(198,161,91,.2) 0%,transparent 68%);
+    top:-15%;left:2%;"></div>
+  <div class="ct">
+    <h1 class="hero r">Culture is not something<br>
+      <span class="accent">to consume.</span>
+    </h1>
+    <div class="line r d2"></div>
+    <p class="r d3" style="font-family:'Playfair Display',serif;font-style:italic;
+       font-size:clamp(1.25rem,2.2vw,1.75rem);color:rgba(245,245,243,.52);">
+      It is something we become inside of.
+    </p>
+  </div>
+  <span class="slbl">Krishnan</span>
+</section>
+
+
+<!-- ─── SECTION 2 ─── -->
+<section class="slide" data-i="1">
+  <div class="glow" style="width:520px;height:520px;
+    background:radial-gradient(circle,rgba(107,92,255,.2) 0%,transparent 68%);
+    bottom:5%;right:4%;"></div>
+  <div class="ct">
+    <p class="body r" style="font-size:clamp(.95rem,1.7vw,1.18rem);
+       color:rgba(245,245,243,.35);margin-bottom:2.5rem;">
+      We live inside systems that scale attention<br>but fragment meaning.
+    </p>
+    <h2 class="h2 r d2" style="font-size:clamp(2.2rem,4.2vw,4.2rem);">We watch.</h2>
+    <h2 class="h2 r d3" style="font-size:clamp(2.2rem,4.2vw,4.2rem);
+       color:rgba(245,245,243,.38);margin-top:.25em;">We scroll.</h2>
+    <h2 class="h2 r d4" style="font-size:clamp(2.2rem,4.2vw,4.2rem);
+       color:rgba(245,245,243,.16);margin-top:.25em;">We consume.</h2>
+  </div>
+</section>
+
+
+<!-- ─── SECTION 3 ─── -->
+<section class="slide" data-i="2">
+  <div class="glow" style="width:460px;height:460px;
+    background:radial-gradient(circle,rgba(198,161,91,.13) 0%,transparent 68%);
+    top:18%;left:22%;"></div>
+  <div class="ct">
+    <p class="r serif-i" style="font-size:clamp(1.5rem,2.8vw,2.6rem);
+       color:rgba(245,245,243,.32);">
+      Something essential is missing.
+    </p>
+    <div class="line r d2" style="margin:2.5rem auto;"></div>
+    <p class="body r d3">
+      I started noticing this<br>in the way people gather.
+    </p>
+  </div>
+</section>
+
+
+<!-- ─── SECTION 4 ─── -->
+<section class="slide" data-i="3">
+  <div class="glow" style="width:640px;height:640px;
+    background:radial-gradient(circle,rgba(107,92,255,.13) 0%,transparent 62%);
+    top:50%;left:50%;margin:-320px 0 0 -320px;"></div>
+  <div class="ct" style="max-width:780px;">
+    <p class="body r" style="font-size:clamp(.95rem,1.7vw,1.15rem);color:rgba(245,245,243,.45);">
+      In the way we experience story.<br>
+      In the way technology shapes attention —<br>but rarely connection.
+    </p>
+    <br>
+    <h2 class="h2 r d2" style="font-size:clamp(1.6rem,3vw,2.8rem);">And I kept asking:</h2>
+    <p class="r d3 serif-i accent"
+       style="font-size:clamp(1.4rem,2.6vw,2.4rem);margin-top:.55rem;line-height:1.3;">
+      what would it look like<br>to create something different?
+    </p>
+  </div>
+</section>
+
+
+<!-- ─── SECTION 5 ─── -->
+<section class="slide" data-i="4">
+  <div class="glow" style="width:520px;height:520px;
+    background:radial-gradient(circle,rgba(198,161,91,.1) 0%,transparent 68%);
+    top:12%;right:8%;"></div>
+  <div class="ct">
+    <p class="small r" style="margin-bottom:2.2rem;">My path has moved across different worlds —</p>
+    <div>
+      <span class="wf">science</span>
+      <span class="wf">story</span>
+      <span class="wf">performance</span>
+      <span class="wf">spiritual practice</span>
+    </div>
+    <p class="body r d5" style="margin-top:2.2rem;color:rgba(245,245,243,.38);">
+      but they never felt separate to me.<br>
+      they felt like one question<br>seen from different angles.
+    </p>
+  </div>
+</section>
+
+
+<!-- ─── SECTION 6 ─── -->
+<section class="slide" data-i="5">
+  <div class="glow" style="width:820px;height:820px;
+    background:radial-gradient(circle,rgba(107,92,255,.11) 0%,transparent 58%);
+    top:50%;left:50%;margin:-410px 0 0 -410px;"></div>
+  <div class="ct">
+    <p class="small r" style="margin-bottom:2.8rem;">Over time, something became clear</p>
+    <h2 class="h2 r d1"
+       style="font-size:clamp(2rem,4.2vw,4.2rem);color:rgba(245,245,243,.48);">
+      people don't need more content.
+    </h2>
+    <h2 class="h2 r d2 accent"
+       style="font-size:clamp(2rem,4.2vw,4.2rem);margin-top:.35em;">
+      they need different conditions.
+    </h2>
+  </div>
+</section>
+
+
+<!-- ─── SECTION 7 — choice trigger ─── -->
+<section class="slide" data-i="6">
+  <div class="glow" style="width:580px;height:580px;
+    background:radial-gradient(circle,rgba(198,161,91,.16) 0%,transparent 68%);
+    top:22%;left:22%;"></div>
+  <div class="ct">
+    <p class="small r" style="margin-bottom:2.2rem;">So I began designing environments</p>
+    <h2 class="h2 r d1"
+       style="font-size:clamp(2rem,4.2vw,4.2rem);">
+      where people don't<br>just watch —
+    </h2>
+    <h2 class="h2 serif-i r d2 accent"
+       style="font-size:clamp(2rem,4.2vw,4.2rem);margin-top:.3em;">
+      but participate.
+    </h2>
+  </div>
+</section>
+
+
+<!-- ─── SECTION 8 ─── -->
+<section class="slide" data-i="7">
+  <div class="glow" style="width:620px;height:620px;
+    background:radial-gradient(circle,rgba(107,92,255,.16) 0%,transparent 68%);
+    bottom:8%;right:4%;"></div>
+  <div class="ct">
+    <h2 class="r serif-i"
+       style="font-size:clamp(3rem,6vw,6.5rem);line-height:1.04;letter-spacing:-.025em;">
+      hi-tech<br>make-believe
+    </h2>
+    <br>
+    <p class="body r d2" style="font-size:clamp(.9rem,1.6vw,1.1rem);">
+      not as escape —<br>
+      <span style="color:var(--fg);">but as a way back into authorship.</span>
+    </p>
+  </div>
+</section>
+
+
+<!-- ─── SECTION 9 ─── -->
+<section class="slide" data-i="8">
+  <div class="glow" style="width:700px;height:700px;
+    background:radial-gradient(circle,rgba(198,161,91,.08) 0%,transparent 60%);
+    top:50%;left:50%;margin:-350px 0 0 -350px;"></div>
+  <div class="ct ct-l" style="max-width:620px;">
+    <p class="r serif-i" style="font-size:clamp(1rem,1.8vw,1.3rem);
+       color:rgba(245,245,243,.2);margin-bottom:2rem;">where…</p>
+    <h2 class="h2 r d1" style="font-size:clamp(1.4rem,2.6vw,2.3rem);margin-bottom:1.1rem;">
+      imagination becomes collective
+    </h2>
+    <div class="line r d1" style="margin:0 0 1.1rem;"></div>
+    <h2 class="h2 r d2" style="font-size:clamp(1.4rem,2.6vw,2.3rem);margin-bottom:1.1rem;">
+      technology supports presence
+    </h2>
+    <div class="line r d2" style="margin:0 0 1.1rem;"></div>
+    <h2 class="h2 r d3 accent" style="font-size:clamp(1.4rem,2.6vw,2.3rem);">
+      people start shaping culture together
+    </h2>
+  </div>
+</section>
+
+
+<!-- ─── SECTION 10 ─── -->
+<section class="slide" data-i="9">
+  <div class="glow" style="width:540px;height:540px;
+    background:radial-gradient(circle,rgba(107,92,255,.13) 0%,transparent 68%);
+    top:10%;right:12%;"></div>
+  <div class="ct">
+    <span class="flow-item r">from audience</span>
+    <span class="flow-arr   r d1">↓</span>
+    <span class="flow-item  r d1">participant</span>
+    <span class="flow-arr   r d2">↓</span>
+    <span class="flow-item  r d2">co-creator</span>
+    <span class="flow-arr   r d3">↓</span>
+    <span class="flow-item flow-final r d3">something alive</span>
+  </div>
+</section>
+
+
+<!-- ─── SECTION 11 ─── -->
+<section class="slide" data-i="10">
+  <div class="glow" style="width:840px;height:840px;
+    background:radial-gradient(circle,rgba(107,92,255,.15) 0%,transparent 56%);
+    top:50%;left:50%;margin:-420px 0 0 -420px;"></div>
+  <div class="ct" style="max-width:700px;">
+    <p class="small r" style="margin-bottom:1.6rem;">This work unfolds through</p>
+    <h2 class="r d1 serif accent"
+       style="font-size:clamp(3.2rem,6.5vw,7rem);line-height:.98;letter-spacing:-.025em;">
+      Radiant IRIS
+    </h2>
+    <br>
+    <p class="body r d2" style="font-size:clamp(.95rem,1.7vw,1.15rem);
+       color:rgba(245,245,243,.44);margin-top:.8rem;">
+      not as a company<br>
+      but as a living ecosystem<br>
+      where stories evolve through people<br>
+      and culture becomes something we practice
+    </p>
+  </div>
+</section>
+
+
+<!-- ─── SECTION 12 — Portrait ─── -->
+<section class="slide" data-i="11" style="justify-content:flex-start;">
+  <div class="portrait-wrap">
+    <!--
+      ══ TO ADD YOUR PHOTO ══════════════════════════
+      Replace the .portrait-ph div below with:
+        <img class="portrait-img" src="krishnan.jpg" alt="Krishnan">
+      ═════════════════════════════════════════════
+    -->
+    <div class="portrait-ph"></div>
+    <div class="portrait-grad"></div>
+  </div>
+  <div class="portrait-text">
+    <p class="body r serif-i"
+       style="font-size:clamp(1rem,1.8vw,1.2rem);color:rgba(245,245,243,.38);margin-bottom:1.6rem;">
+      I work with people who feel
+    </p>
+    <h2 class="h2 r d1" style="font-size:clamp(1.9rem,3.8vw,3.4rem);line-height:1.22;">
+      that something in the<br>current systems<br>is incomplete.
+    </h2>
+  </div>
+</section>
+
+
+<!-- ─── SECTION 13 ─── -->
+<section class="slide" data-i="12">
+  <div class="glow" style="width:520px;height:520px;
+    background:radial-gradient(circle,rgba(198,161,91,.13) 0%,transparent 68%);
+    bottom:12%;left:12%;"></div>
+  <div class="ct">
+    <h2 class="h2 r half" style="font-size:clamp(2rem,4.2vw,4rem);">people who are ready</h2>
+    <br>
+    <p class="body r d2" style="font-size:clamp(.95rem,1.7vw,1.15rem);">
+      not just to think about new possibilities —
+    </p>
+    <h2 class="h2 serif-i r d3 accent"
+       style="font-size:clamp(2rem,4.2vw,4rem);margin-top:.3em;">
+      but to live them.
+    </h2>
+  </div>
+</section>
+
+
+<!-- ─── SECTION 14 — Form ─── -->
+<section class="slide s14" data-i="13">
+  <div class="glow" style="width:620px;height:620px;
+    background:radial-gradient(circle,rgba(107,92,255,.1) 0%,transparent 68%);
+    top:40%;right:-4%;"></div>
+  <div class="form-wrap r">
+    <h2 class="form-title">
+      Enter the<br>
+      <span class="accent serif-i">collaboratorium</span>
+    </h2>
+    <form id="cForm" onsubmit="handleForm(event)">
+      <div class="form-g">
+        <label class="form-lbl">Name</label>
+        <input type="text" class="form-in" placeholder="Your name" required>
+      </div>
+      <div class="form-g">
+        <label class="form-lbl">Email</label>
+        <input type="email" class="form-in" placeholder="Your email" required>
+      </div>
+      <div class="form-g">
+        <label class="form-lbl">Role / Practice</label>
+        <input type="text" class="form-in" placeholder="How you move through the world">
+      </div>
+      <div class="form-g">
+        <label class="form-lbl">What future do you want to help build?</label>
+        <textarea class="form-ta" placeholder="In your own words…"></textarea>
+      </div>
+      <div class="form-g">
+        <label class="form-lbl">Why does this resonate?</label>
+        <textarea class="form-ta" placeholder="What brought you here?"></textarea>
+      </div>
+      <button type="submit" class="form-btn">enter ↗</button>
+    </form>
+  </div>
+</section>
+
+
+</div><!-- /stage -->
+</div><!-- /stage-wrap -->
+
+
+<script>
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+let cur = 0;
+const N   = 14;
+let busy  = false;
+let choiceOpen = false;
+let choiceDone = false;
+let soundOn    = false;
+let audioCtx, masterGain;
+
+const stage   = document.getElementById('stage');
+const dotsEl  = document.getElementById('dots');
+const counter = document.getElementById('counter');
+const hint    = document.getElementById('hint');
+const overlay = document.getElementById('cOverlay');
+const sndBtn  = document.getElementById('sndBtn');
+
+
+/* ═══════════════════════════════════════════
+   PROGRESS DOTS
+═══════════════════════════════════════════ */
+for (let i = 0; i < N; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot';
+  d.dataset.i = i;
+  d.onclick = () => nav(i);
+  dotsEl.appendChild(d);
+}
+
+function refreshDots() {
+  dotsEl.querySelectorAll('.dot').forEach((d, i) => {
+    d.classList.toggle('active',  i === cur);
+    if (i < cur) d.classList.add('visited');
+  });
+}
+
+
+/* ═══════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════ */
+function nav(to, skipChoice) {
+  to = Math.max(0, Math.min(N - 1, to));
+  if (to === cur && !skipChoice) return;
+  if (busy) return;
+
+  // Intercept forward into post-choice territory
+  if (to >= 7 && !choiceDone && !choiceOpen && !skipChoice) {
+    choiceOpen = true;
+    overlay.classList.add('open');
+    return;
+  }
+
+  busy = true;
+  deact(cur);
+  cur = to;
+
+  stage.style.transform = `translateX(calc(${cur} * -100vw))`;
+  refreshDots();
+  counter.textContent = String(cur + 1).padStart(2, '0') + ' / ' + N;
+  if (cur >= 2) hint.classList.add('gone');
+  if (soundOn)  updateSnd(cur);
+
+  setTimeout(() => { act(cur); busy = false; }, 90);
+  setTimeout(() => { busy = false; }, 1000);
+}
+
+function act(i) {
+  const s = document.querySelector(`.slide[data-i="${i}"]`);
+  if (s) s.classList.add('active');
+}
+function deact(i) {
+  const s = document.querySelector(`.slide[data-i="${i}"]`);
+  if (s) s.classList.remove('active');
+}
+
+
+/* ═══════════════════════════════════════════
+   CHOICE
+═══════════════════════════════════════════ */
+window.choose = function(theme) {
+  const map = {
+    amber:  { a: '#C6A15B', bg: '#0B0B0C' },
+    violet: { a: '#9387FF', bg: '#09090f' },
+    rose:   { a: '#C48FAE', bg: '#0e0a0d' },
+  };
+  const p = map[theme] || map.amber;
+  document.documentElement.style.setProperty('--accent', p.a);
+  document.body.style.background = p.bg;
+
+  choiceDone = true;
+  choiceOpen = false;
+  overlay.classList.remove('open');
+  setTimeout(() => nav(7, true), 750);
+};
+
+
+/* ═══════════════════════════════════════════
+   WHEEL
+═══════════════════════════════════════════ */
+let wQ = 0, wT = null;
+
+window.addEventListener('wheel', e => {
+  e.preventDefault();
+  if (choiceOpen) return;
+
+  // Let form section scroll internally
+  if (cur === 13) {
+    const fs = document.querySelector('.s14');
+    if (fs) {
+      const atBot = fs.scrollTop >= fs.scrollHeight - fs.clientHeight - 4;
+      const atTop = fs.scrollTop <= 2;
+      if ((e.deltaY > 0 && !atBot) || (e.deltaY < 0 && !atTop)) {
+        fs.scrollTop += e.deltaY * 0.85;
+        return;
+      }
+    }
+  }
+
+  clearTimeout(wT);
+  wQ += e.deltaY;
+  wT = setTimeout(() => {
+    if (wQ >  30) nav(cur + 1);
+    else if (wQ < -30) nav(cur - 1);
+    wQ = 0;
+  }, 55);
+}, { passive: false });
+
+
+/* ═══════════════════════════════════════════
+   KEYBOARD
+═══════════════════════════════════════════ */
+window.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); nav(cur + 1); }
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); nav(cur - 1); }
+  if (e.key === 'Escape' && choiceOpen) choose('amber');
+});
+
+
+/* ═══════════════════════════════════════════
+   TOUCH
+═══════════════════════════════════════════ */
+let tx = 0;
+window.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+window.addEventListener('touchend',   e => {
+  const dx = e.changedTouches[0].clientX - tx;
+  if (Math.abs(dx) > 48) nav(dx < 0 ? cur + 1 : cur - 1);
+}, { passive: true });
+
+
+/* ═══════════════════════════════════════════
+   CURSOR
+═══════════════════════════════════════════ */
+const curEl  = document.getElementById('cur');
+const ringEl = document.getElementById('curRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  curEl.style.left = mx + 'px'; curEl.style.top = my + 'px';
+});
+(function loop() {
+  rx += (mx - rx) * .11; ry += (my - ry) * .11;
+  ringEl.style.left = rx + 'px'; ringEl.style.top = ry + 'px';
+  requestAnimationFrame(loop);
+})();
+
+document.querySelectorAll('button, a, input, textarea, .dot').forEach(el => {
+  el.addEventListener('mouseenter', () => { ringEl.classList.add('hover'); curEl.classList.add('hover'); });
+  el.addEventListener('mouseleave', () => { ringEl.classList.remove('hover'); curEl.classList.remove('hover'); });
+});
+
+
+/* ═══════════════════════════════════════════
+   AMBIENT SOUND  (Web Audio API — all generated, no files)
+═══════════════════════════════════════════ */
+function initAudio() {
+  if (audioCtx) return;
+  audioCtx  = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = audioCtx.createGain();
+  masterGain.gain.value = 0;
+  masterGain.connect(audioCtx.destination);
+
+  // Synthetic reverb
+  const conv    = audioCtx.createConvolver();
+  conv.buffer   = makeReverb(audioCtx, 6, 2.8);
+  const convG   = audioCtx.createGain();
+  convG.gain.value = 0.65;
+  conv.connect(convG); convG.connect(masterGain);
+
+  // Drone bus
+  const drone = audioCtx.createGain();
+  drone.gain.value = 0.038;
+  drone.connect(masterGain);
+  drone.connect(conv);
+
+  // A-minor drone cluster: A1 E2 A2 D3 A3
+  const freqs = [55, 82.41, 110, 146.83, 220];
+  freqs.forEach((f, i) => {
+    const osc  = audioCtx.createOscillator();
+    osc.type   = i === 0 ? 'triangle' : 'sine';
+    osc.frequency.value = f + (Math.random() - .5) * .35;
+    const g    = audioCtx.createGain();
+    g.gain.value = 0.28 / (i + 1);
+
+    // Micro-vibrato LFO
+    const lfo  = audioCtx.createOscillator();
+    lfo.frequency.value = 0.035 + Math.random() * .065;
+    const lfoG = audioCtx.createGain();
+    lfoG.gain.value = f * .0022;
+    lfo.connect(lfoG); lfoG.connect(osc.frequency);
+    lfo.start();
+
+    osc.connect(g); g.connect(drone);
+    osc.start();
+  });
+
+  // Upper partial shimmer (sent only to reverb)
+  const shimmer = audioCtx.createOscillator();
+  shimmer.type  = 'sine';
+  shimmer.frequency.value = 1760;
+  const shimG   = audioCtx.createGain();
+  shimG.gain.value = 0.0045;
+  shimmer.connect(shimG); shimG.connect(conv);
+  shimmer.start();
+
+  // Very slow filter sweep for texture
+  const filt = audioCtx.createBiquadFilter();
+  filt.type  = 'lowpass';
+  filt.frequency.value = 800;
+  const sweep = audioCtx.createOscillator();
+  sweep.frequency.value = 0.02;
+  const sweepG = audioCtx.createGain();
+  sweepG.gain.value = 400;
+  sweep.connect(sweepG); sweepG.connect(filt.frequency);
+  sweep.start();
+}
+
+function makeReverb(ctx, dur, dec) {
+  const sr  = ctx.sampleRate;
+  const len = sr * dur;
+  const buf = ctx.createBuffer(2, len, sr);
+  for (let c = 0; c < 2; c++) {
+    const data = buf.getChannelData(c);
+    for (let i = 0; i < len; i++)
+      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, dec);
+  }
+  return buf;
+}
+
+// Slightly vary volume per slide — quieter at dawn (S1), richer mid-journey
+const volMap = [.32,.28,.26,.32,.28,.38,.33,.3,.36,.28,.36,.26,.32,.2];
+
+function updateSnd(slide) {
+  if (!masterGain) return;
+  const v = volMap[slide] ?? .3;
+  masterGain.gain.linearRampToValueAtTime(v, audioCtx.currentTime + 2.8);
+}
+
+sndBtn.addEventListener('click', () => {
+  initAudio();
+  soundOn = !soundOn;
+  if (soundOn) {
+    sndBtn.textContent = '● sound';
+    sndBtn.classList.add('on');
+    masterGain.gain.linearRampToValueAtTime(volMap[cur] ?? .3, audioCtx.currentTime + 2.2);
+  } else {
+    sndBtn.textContent = '○ sound';
+    sndBtn.classList.remove('on');
+    masterGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1.2);
+  }
+});
+
+
+/* ═══════════════════════════════════════════
+   FORM
+═══════════════════════════════════════════ */
+window.handleForm = function(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('.form-btn');
+  btn.textContent = 'received ✓';
+  btn.disabled = true;
+  btn.style.opacity = '.55';
+};
+
+
+/* ═══════════════════════════════════════════
+   RESIZE
+═══════════════════════════════════════════ */
+window.addEventListener('resize', () => {
+  stage.style.transition = 'none';
+  stage.style.transform  = `translateX(calc(${cur} * -100vw))`;
+  requestAnimationFrame(() => {
+    stage.style.transition = 'transform var(--spd) cubic-bezier(.76,0,.24,1)';
+  });
+});
+
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+act(0);
+refreshDots();
+
+// Soft fade-in on load
+document.body.style.opacity = '0';
+requestAnimationFrame(() => {
+  document.body.style.transition = 'opacity 2s ease, background 3s ease';
+  requestAnimationFrame(() => { document.body.style.opacity = '1'; });
+});
+
+</script>
+</body>
+</html>
